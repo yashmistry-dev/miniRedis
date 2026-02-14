@@ -1,11 +1,15 @@
 import asyncio
 import logging
-from app.commands import process_command
+from typing import Dict, Any
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("miniRedis")
 
 
+# Global database
+main_database: Dict[str, Any] = {}
+
+from app.commands import process_command
 
 async def handle_client(reader, writer):
     """
@@ -27,8 +31,11 @@ async def handle_client(reader, writer):
                 logger.error("Error parsing command: %s", e)
                 response = "ERROR: " + str(e)
 
-
+            # Ensure the response is a string before encoding; convert other types as needed
+            if not isinstance(response, str):
+                response = str(response)
             writer.write(response.encode('utf-8'))
+            
             await writer.drain()
     except Exception as e:
         logger.error("Error handling client: %s", e)
