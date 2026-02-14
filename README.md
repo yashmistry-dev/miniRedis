@@ -1,2 +1,2 @@
 # miniRedis
-A small python based redis replica.
+A Realistic Python based Redis Server.
